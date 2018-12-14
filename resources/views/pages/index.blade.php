@@ -10,6 +10,9 @@
 		</div>					
 
 	</div>
+	<a href="{{url('/import')}}" class="btn btn-success">Import</a>
+	<a href="{{url('/download')}}" class="btn btn-success">Export All</a>
+	
 	<table class="table table-bordered">
 		<tr>
 			<th with="80px">No</th>

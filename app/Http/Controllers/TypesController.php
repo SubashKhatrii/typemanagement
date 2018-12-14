@@ -43,7 +43,7 @@ class TypesController extends Controller
     public function store(Request $request)
     {
         //
-       $this->validate($request,['title'=>'required',]);
+       $this->validate($request, ['title'=>'required',]);
        $data= new Types;
        $data->addTitle($request);
       
@@ -87,7 +87,7 @@ class TypesController extends Controller
 
      
         
-      $this->validate($request,['title'=>'required']);
+      $this->validate($request, ['title'=>'required']);
       $data= new Types;
        $data->editTitle($request,$id);
         
