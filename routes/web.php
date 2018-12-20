@@ -16,6 +16,6 @@ Route::get('/pages/index','TypesController@index') -> name('pages-index');
  Route::get('/pages/enable/{id}', 'TypesController@enable') -> name('pages-enable');
   Route::get('/pages/disable/{id}', 'TypesController@disable') -> name('pages-disable');
 
-
-Route::get('/download','UsersController@export');
-Route::get('/import','UsersController@import');
+Route::get('/pages/importExport', 'TypesController@importExport')->name('import-export');
+Route::get('/pages/downloadExcel/{type}', 'TypesController@downloadExcel')->name('pages-download');
+Route::post('pages/importExcel', 'TypesController@importExcel')->name('pages-import');

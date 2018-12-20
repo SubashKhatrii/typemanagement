@@ -10,8 +10,8 @@
 		</div>					
 
 	</div>
-	<a href="{{url('/import')}}" class="btn btn-success">Import</a>
-	<a href="{{url('/download')}}" class="btn btn-success">Export All</a>
+	<a href="{{route('import-export')}}" class="btn btn-success">Import|Export</a>
+	
     <a href="{{route('pages-store')}}" class="btn btn-primary">Create</a>
     
 	

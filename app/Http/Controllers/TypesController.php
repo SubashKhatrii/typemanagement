@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use App\Types;
 use App\Traits\Utility;
+use Excel;
 
 class TypesController extends Controller
 {
@@ -114,7 +115,7 @@ class TypesController extends Controller
 
 
         return view('pages.edit')->with(compact('type'));
-    }
+      }
 
                    //disabling the status
                public function disable(Request $request, $id)
@@ -138,5 +139,46 @@ class TypesController extends Controller
                   }
               }
 
+
+               public function importExport()
+                         {
+
+                           return view('pages.importexport');
+                         }
     
-}
+               public function downloadExcel($type)
+            {
+
+                $data = Types::get()->toArray();
+                    
+                return Excel::create('titletype', function($excel) use ($data) {
+                    $excel->sheet('mySheet', function($sheet) use ($data)
+                    {
+                        $sheet->fromArray($data);
+                    });
+                })->download($type);
+            }
+
+            public function importExcel(Request $request)
+                        {
+                            $request->validate([
+                                'import_file' => 'required'
+                            ]);
+                     
+                            $path = $request->file('import_file')->getRealPath();
+                            $data = Excel::load($path)->get();
+                     
+                            if($data->count()){
+                                foreach ($data as $key => $value) {
+                                    $arr[] = ['title' => $value->title, 'slug' => $value->slug];
+                                }
+                     
+                                if(!empty($arr)){
+                                    Types::insert($arr);
+                                }
+                            }
+                     
+                            return back()->with('success', 'Insert Record successfully.');
+                        }
+
+  }
