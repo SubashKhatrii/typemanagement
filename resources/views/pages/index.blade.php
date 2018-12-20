@@ -12,47 +12,52 @@
 	</div>
 	<a href="{{url('/import')}}" class="btn btn-success">Import</a>
 	<a href="{{url('/download')}}" class="btn btn-success">Export All</a>
+    <a href="{{route('pages-store')}}" class="btn btn-primary">Create</a>
+    
 	
 	<table class="table table-bordered">
 		<tr>
-			<th with="80px">No</th>
-			<th>Title</th>
-			<th width="140px" class="text-center">
-				<a href="{{route('pages.create')}}" class="btn btn-success btn-sm">
-					+
-				</a>
-			</th>
-			<th>Action</th>
+                            <th>S.no.</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @if(!$types -> isEmpty())
+                                @foreach($types as $key => $type)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td>{{ $type -> title }}</td>
+                                        <td>
+                                            @if($type -> disabled)
+                                                Disabled
+                                            @else
+                                                Active
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('pages-edit', ['id' => $type -> id])}}" title="Edit Title">
+                                                Edit
+                                            </a>
+                                            @if($type -> disabled)
+                                                <a href="{{ route('pages-enable', ['id' => $type -> id])}}" title="Enable Title">
+                                                    Enable
+                                                </a>
+                                            @else
+                                                <a href="{{ route('pages-disable', ['id' => $type -> id])}}" title="Disable Title">
+                                                    Disable
+                                                </a>
+                                            @endif
 
-		</tr>
-		<?php $no=1;?>
-		@foreach($types as $key=>$value)
-		<tr>
-		<td>{{$no++}}</td>
-		
-		 <td>@if($value->status==NULL) {{$value->title}} @else DELETED @endif</td>
-
-		<td>
-		<a class="btn btn-primary btn-lg" href="{{route('pages.edit',$value->id)}}">Edit </i> </a>
-		<td>
-		
-		{!!Form::open(['method'=>'DELETE','route'=>['pages.destroy', $value->id]])!!}
-			<button type="submit" style="display: inline;" class="btn btn-danger btn-sm">Delete</button>
-
-			
-		{!! Form::close() !!}
-
-		<a id="#delPermanently" href="{{ url('/pages/delete-permanently/'.$value->id) }}" class="btn btn-default btn-sm" title="Delete Permanently">RECYCLE</a>
-		</td>
-
-		
-		
-		
-	
-		</td>
-		</tr>
-		@endforeach
-		
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="4" class="text-center">No Records Found</td>
+                                </tr>
+                            @endif
 	</table>
 	
 

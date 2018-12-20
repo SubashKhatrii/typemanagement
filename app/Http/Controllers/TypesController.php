@@ -1,23 +1,30 @@
 <?php
-
+namespace App\Http\Controllers\Admin;
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Input;
+use App\Http\Controllers\Controller;
 use App\Types;
-
+use App\Traits\Utility;
 
 class TypesController extends Controller
 {
+
+     use Utility;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+  
+
     public function index()
     {
         //
-        $types= Types::all();
+        $model = new Types;
+
+       $types =$model->findTitle();
 
         return view('pages.index')->with(compact('types'));
 
@@ -34,101 +41,102 @@ class TypesController extends Controller
         return view('pages.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function store(Request $request)
     {
         //
-       $this->validate($request, ['title'=>'required',]);
-       $data= new Types;
-       $data->addTitle($request);
-      
-       return redirect()->route('pages.index')->with('success','Created Successfully');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-        $type = Types::find($id);
-        return view('pages.edit', compact('type'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-
-     
-        
-      $this->validate($request, ['title'=>'required']);
-      $data= new Types;
-       $data->editTitle($request,$id);
-        
-
        
-        return redirect()->route('pages.index')->with('success','Updated Successfully');
+      $model= new Types;
+      $input = Input::all();
+      $method = $request->method();
+      if($request->isMethod('post')){
 
-        
-        
+            $validate = $model->validation($input);
+
+            if($validate->fails()){
+
+                return redirect()->back()->withErrors($validate)->withInput();
+
+
+             }
+            $input['slug']  = $this -> slugify($input['title']);
+            //
+            $addResponse    = $model -> addinput($input);
+            //echo "<pre>";print_r($input);die;
+
+            if(isset($addResponse)) {
+
+                $success    = isset($addResponse['response']) ? $addResponse['response'] : null;
+                $error      = isset($addResponse['error']) ? $addResponse['error'] : null;
+                if($success) {
+                    return redirect() -> back() -> with('success', 'Successfully Added!');
+                } else {
+                    return redirect() -> back() -> withErrors($error) -> withInput();
+                }
+            } else {
+                return redirect() -> back() -> withErrors('Something went wrong. Please try again!') -> withInput();
+            }
+        }
+
+
+        return view('pages.create');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request,$id=null)
-            {
-                //
-             /*   if($request->isMethod('delete')){
-                    $data= $request->all();
-                    echo "<pre>";print_r($data);die;
-
+    //edit functionality
+    public function edit(Request $request, $id){
+        $model = new Types;
+        $type= $model->findOrFail($id);
+        $input = Input::all();
+        $method= $request->method();
+            if($request->isMethod('post')){
+                $validate= $model->validation($input);
+                if($validate->fails()){
+                    return redirect()->back()->withErrors($validate)->withInput();
                 }
-        */
-                //Types::find($id)->delete()
+                $updateResponse= $model->changeTitle($id, $input);
+
+                if(isset($updateResponse)){
+                  $success = isset($updateResponse['response']) ? $updateResponse['response'] : null;
+                  $error = isset($updateResponse['error']) ? $updateResponse['error'] : null;
+                  if($success) {
+                    return redirect() -> back() -> with('success', 'Successfully Added!');
+                } else {
+                    return redirect() -> back() -> withErrors($error) -> withInput();
+                }
+            } else {
+                return redirect() -> back() -> withErrors('Something went wrong. Please try again!') -> withInput();
+            }
                 
-                $type= new Types();
-
-                $type->deleteID($request,$id);
 
                 
-
-                return redirect()->route('pages.index')->with('success','deleted Successfully');
             }
 
+
+
+        return view('pages.edit')->with(compact('type'));
+    }
+
+                   //disabling the status
+               public function disable(Request $request, $id)
+              {
+                  $disabled = Types::find($id) -> update(['disabled' => 1]);
+                  if($disabled) {
+                      return redirect() -> back() -> with('success', " Disabled");
+                  } else {
+                      return redirect() -> back() -> withErrors("Error Disabling the Title!");
+                  }
+              }
+                //enabling the status
             
-    public function deletePermanently(Request $request,$id=null){
-                Types::find($id)->delete();
-                return redirect()->route('pages.index')->with('success','deleted Successfully');
+              public function enable(Request $request, $id)
+              {
+                  $disabled = Types::find($id) -> update(['disabled' => null]);
+                  if($disabled) {
+                      return redirect() -> back() -> with('success', "Enabled");
+                  } else {
+                      return redirect() -> back() -> withErrors("Error Enabling the Title!");
+                  }
+              }
 
-            }
+    
 }
