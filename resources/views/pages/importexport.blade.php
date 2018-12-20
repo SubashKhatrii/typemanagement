@@ -12,9 +12,9 @@
 	</div>
 	<div class="panel-body">
  
-            <a href= "{{url('/pages/downloadExcel/xlsx') }}"> <button class="btn btn-success">Download Excel xls</button></a>
-            <a href=""><button class="btn btn-success">Download Excel xlsx</button></a>
-            <a href=""><button class="btn btn-success">Download CSV</button></a>
+            <a href= "{{url('/pages/downloadExcel/xls') }}"> <button class="btn btn-success">Download Excel xls</button></a>
+            <a href="{{url('/pages/downloadExcel/xlsx') }}"><button class="btn btn-success">Download Excel xlsx</button></a>
+            <a href="{{url('/pages/downloadExcel/csv') }}"><button class="btn btn-success">Download CSV</button></a>
  
             <form style="border: 4px solid #a1a1a1;margin-top: 15px;padding: 10px;" action="{{ route('pages-import') }}" class="form-horizontal" method="post" enctype="multipart/form-data">
                 @csrf
